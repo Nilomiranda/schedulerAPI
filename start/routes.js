@@ -2,4 +2,5 @@
 
 const Route = use('Route')
 
-Route.post('users', 'UserController.store')
+Route.post('users', 'UserController.store') // user signup
+Route.get('users', 'SessionController.store') // user login
