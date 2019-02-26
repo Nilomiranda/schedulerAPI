@@ -19,7 +19,7 @@ class UserController {
           .send({ message: { error: 'User already registered' } })
       }
 
-      // if user doesn't exist, proceeds with saving him in DB
+      // if user doesn't exist, proceeds with saving in DB
       const user = await User.create(data)
 
       return user
