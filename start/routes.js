@@ -7,7 +7,7 @@ Route.get('users', 'SessionController.store') // user login
 
 // recover password route
 Route.post('users/forgotPassword', 'ForgotPasswordController.store')
-
+// Route.put('users/forgotPassword/:token')
 /**
  * routes only for authenticated users
  */

@@ -29,10 +29,7 @@ class ForgotPasswordController {
       // persisting data (saving)
       await user.save()
 
-      // TODO: Improve the message in the view (resources/views/emails)
-      // TODO: Send variables to the view template (eg. username...)
-
-      await Mail.send('emails.recover', {}, (message) => {
+      await Mail.send('emails.recover', { user, token }, (message) => {
         message
           .from('support@danmiranda.io')
           .to(email)
