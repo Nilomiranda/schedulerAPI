@@ -21,4 +21,7 @@ Route.group(() => {
 
   // listing all events
   Route.get('events/list', 'EventController.index')
+
+  // listing events per date
+  Route.get('events/list/date', 'EventController.show')
 }).middleware(['auth'])

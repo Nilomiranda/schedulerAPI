@@ -14,24 +14,24 @@ class EventController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async index ({ request, response, auth }) {
-    const userID = auth.user.id // logged user ID
+  async index ({ response, auth }) {
+    try {
+      const userID = auth.user.id // logged user ID
 
-    const events = await Event.query()
-      .where({
-        user_id: userID
-      }).fetch()
+      const events = await Event.query()
+        .where({
+          user_id: userID
+        }).fetch()
 
-    return events
+      return events
+    } catch (err) {
+      return response.status(err.status)
+    }
   }
 
   /**
    * Create/save a new event.
    * POST events
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
    */
   async store ({ request, response, auth }) {
     try {
@@ -50,6 +50,42 @@ class EventController {
     }
   }
 
+  async show ({ request, response, auth }) {
+    try {
+      const { date } = request.only(['date']) // desired date
+      const userID = auth.user.id // logged user's ID
+
+      // const event = await Event.findByOrFail('date', date)
+
+      const event = await Event.query()
+        .where({
+          user_id: userID,
+          date
+        }).fetch()
+
+      if (event.rows.length === 0) {
+        return response
+          .status(404)
+          .send({ message: {
+            error: 'No event found'
+          } })
+      }
+
+      return event
+    } catch (err) {
+      if (err.name === 'ModelNotFoundException') {
+        return response
+          .status(err.status)
+          .send({ message: {
+            error: 'No event found'
+          } })
+      }
+
+      console.log(err)
+      return response.status(err.status)
+    }
+  }
+
   /**
    * Update event details.
    * PUT or PATCH events/:id
@@ -64,10 +100,6 @@ class EventController {
   /**
    * Delete a event with id.
    * DELETE events/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
    */
   async destroy ({ params, request, response }) {
   }
