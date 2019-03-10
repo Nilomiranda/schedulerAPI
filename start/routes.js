@@ -24,4 +24,7 @@ Route.group(() => {
 
   // listing events per date
   Route.get('events/list/date', 'EventController.show')
+
+  // deleting event
+  Route.delete('events/:id/delete', 'EventController.destroy')
 }).middleware(['auth'])

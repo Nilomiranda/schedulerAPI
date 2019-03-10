@@ -101,7 +101,33 @@ class EventController {
    * Delete a event with id.
    * DELETE events/:id
    */
-  async destroy ({ params, request, response }) {
+  async destroy ({ params, response, auth }) {
+    try {
+      const eventID = params.id // event's id to be deleted
+      const userID = auth.user.id // logged user's ID
+
+      const event = await Event.findByOrFail('id', eventID)
+
+      // checking if event belongs to user
+      if (event['user_id'] !== userID) {
+        return response
+          .status(401)
+          .send({ message: {
+            error: 'You are not allowed to delete this event'
+          } })
+      }
+
+      // deleting event
+      await event.delete()
+    } catch (err) {
+      if (err.status === 404) {
+        return response.status(err.status)
+          .send({ message: {
+            error: 'Event not found'
+          } })
+      }
+      return response.status(err.status).send(err)
+    }
   }
 }
 
