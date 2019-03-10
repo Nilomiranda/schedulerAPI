@@ -17,5 +17,8 @@ Route.group(() => {
   Route.put('users/:id', 'UpdateUserInfoController.update')
 
   // creating new Event
-  Route.post('/events/new', 'EventController.store')
+  Route.post('events/new', 'EventController.store')
+
+  // listing all events
+  Route.get('events/list', 'EventController.index')
 }).middleware(['auth'])

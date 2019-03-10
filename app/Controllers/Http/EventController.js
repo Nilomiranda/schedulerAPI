@@ -13,9 +13,16 @@ class EventController {
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
-   * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
+  async index ({ request, response, auth }) {
+    const userID = auth.user.id // logged user ID
+
+    const events = await Event.query()
+      .where({
+        user_id: userID
+      }).fetch()
+
+    return events
   }
 
   /**
