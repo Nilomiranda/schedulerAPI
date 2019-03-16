@@ -34,6 +34,17 @@ class User extends Model {
   tokens () {
     return this.hasMany('App/Models/Token')
   }
+
+  /**
+   * relationship for users and events
+   * each user may have many events
+   * @method events
+   *
+   * @return {Obejct}
+   */
+  events () {
+    return this.hasMany('App/Models/Event')
+  }
 }
 
 module.exports = User
