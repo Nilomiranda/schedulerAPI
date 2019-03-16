@@ -80,8 +80,6 @@ class EventController {
             error: 'No event found'
           } })
       }
-
-      console.log(err)
       return response.status(err.status)
     }
   }
@@ -106,10 +104,25 @@ class EventController {
       const eventID = params.id // event's id to be deleted
       const userID = auth.user.id // logged user's ID
 
-      const event = await Event.findByOrFail('id', eventID)
+      const event = await Event.query()
+        .where({
+          id: eventID,
+          user_id: userID
+        }).fetch()
+
+      /**
+       * As the fetched data comes within a serializer
+       * we need to convert it to JSON so we are able
+       * to work with the data retrieved
+       *
+       * Also, the data will be inside an array, as we
+       * may have multiple results, we need to retrieve
+       * the first value of the array
+       */
+      const jsonEvent = event.toJSON()[0]
 
       // checking if event belongs to user
-      if (event['user_id'] !== userID) {
+      if (jsonEvent['user_id'] !== userID) {
         return response
           .status(401)
           .send({ message: {
@@ -118,7 +131,11 @@ class EventController {
       }
 
       // deleting event
-      await event.delete()
+      await Event.query()
+        .where({
+          id: eventID,
+          user_id: userID
+        }).delete()
     } catch (err) {
       if (err.status === 404) {
         return response.status(err.status)
@@ -126,6 +143,7 @@ class EventController {
             error: 'Event not found'
           } })
       }
+      console.log(err)
       return response.status(err.status).send(err)
     }
   }
