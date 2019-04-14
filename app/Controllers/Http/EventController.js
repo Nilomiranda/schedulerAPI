@@ -38,6 +38,26 @@ class EventController {
       const { title, location, date, time } = request.all() // info for the event
       const userID = auth.user.id // retrieving user id current logged
 
+      /**
+       * looks for an event set at the same date and time as the new event
+       * being created
+       */
+      const event = await Event.query()
+        .where({
+          date,
+          time
+        }).fetch()
+
+      const jsonEvent = event.toJSON()
+
+      if (jsonEvent.length > 0) {
+        return response
+          .status(400)
+          .send({ message: {
+            error: `You can't create an event in the same date and time`
+          } })
+      }
+
       const newEvent = await Event.create({ user_id: userID, title, location, date, time })
 
       return newEvent
